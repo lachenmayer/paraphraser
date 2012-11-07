@@ -4,14 +4,13 @@ $ ->
 
   output = (words) ->
     sentenceId = id()
-    $('#output').append '<ul id='+sentenceId+'></ul>'
-    selIndex = 0
+    $('#output').append '<ul class=dropdown id='+sentenceId+'></ul>'
     for word in words
       if word instanceof Array
-        $('<li><select class="select'+selIndex+'"></select></li>').appendTo 'ul#'+sentenceId
+        wordId = id()
+        $('<li><a href="#" class=dropdown-toggle data-toggle=dropdown>'+word[0]+'</a><ul role=menu class=dropdown-menu id='+wordId+'></ul></li>').appendTo 'ul#'+sentenceId
         for w in word
-          $('<option>' + w + '</option>').appendTo 'ul#'+sentenceId+' select.select'+selIndex
-        selIndex++
+          $('<li>' + w + '</li>').appendTo 'ul#'+wordId
       else
         $('ul#'+sentenceId).append '<li>' + word + '</li>'
 
