@@ -15,4 +15,11 @@ html
         textarea#text
         input#submit(type='submit')
       #output
-
+  script#simple-word(type='text/template')
+    span.name.simple.
+      <%= name %>
+  script#synonym-word(type='text/template')
+    span.name.synonym.
+      <%= name %>
+    ul.synonyms.
+      <% _.each(synonyms, function(s) { %><li><%= s %></li><% }); %>
