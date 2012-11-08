@@ -15,7 +15,10 @@ Sentence = Backbone.Collection.extend
 
 WordView = Backbone.View.extend
 
-  tagName: 'li'
+  tagName:
+    'li'
+  attributes:
+    'class': 'word'
 
   events:
     'click .name'        : 'showOptions'
@@ -34,7 +37,8 @@ WordView = Backbone.View.extend
     @in('.synonyms').hide()
     return this
 
-  in: (elem) -> $(elem, @el)
+  in: (elem) ->
+    $(elem, @el)
 
   showOptions: ->
     @in('.synonyms').toggle()
