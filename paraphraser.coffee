@@ -1,20 +1,61 @@
-$ ->
-  id = ->
-    Math.random().toString().slice(2, 10)
+Word = Backbone.Model.extend()
 
-  output = (words) ->
-    sentenceId = id()
-    $('#output').append '<ul class=dropdown id='+sentenceId+'></ul>'
+Sentence = Backbone.Collection.extend
+  model: Word
+
+  fromWords: (words) ->
     for word in words
-      if word instanceof Array
-        wordId = id()
-        $('<li><a href="#" class=dropdown-toggle data-toggle=dropdown>'+word[0]+'</a><ul role=menu class=dropdown-menu id='+wordId+'></ul></li>').appendTo 'ul#'+sentenceId
-        for w in word
-          $('<li>' + w + '</li>').appendTo 'ul#'+wordId
-      else
-        $('ul#'+sentenceId).append '<li>' + word + '</li>'
+      w = new Word
+        name: word[0]
+        synonyms: word[1]
+      @push w
+    return this
 
+
+WordView = Backbone.View.extend
+
+  tagName: 'li'
+
+  render: ->
+    name = @model.get('name')
+    synonyms = @model.get('synonyms')
+    if synonyms.length > 0
+      $(@el).html '<select></select>'
+      $select = $('select', @el)
+      for synonym in synonyms
+        $select.append '<option>' + synonym + '</option>'
+    else
+      $(@el).html name
+    return this
+
+
+SentenceView = Backbone.View.extend
+
+  el: '#output'
+
+  render: ->
+    $(@el).append '<ul></ul>'
+    _(@collection.models).each (word) ->
+      wordView = new WordView
+        model: word
+      $('ul', @el).append wordView.render().el
+    return this
+
+
+makeSentence = (words) ->
+  sentence = new Sentence
+  for word in words
+    w = new Word
+      name: word[0]
+      synonyms: word[1]
+    sentence.push w
+  sentence
+
+$ ->
   $('form#input').submit (e) ->
     e.preventDefault()
     $.post 'http://localhost:5000/paraphrase', {"text": $('#text').val()}, (data) ->
-      output JSON.parse data
+      words = JSON.parse data
+      sentenceView = new SentenceView
+        collection: (new Sentence).fromWords words
+      sentenceView.render()

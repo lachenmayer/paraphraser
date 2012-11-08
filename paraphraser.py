@@ -25,9 +25,9 @@ def synonymIfExists(sentence):
       syns = synonyms(word, t)
       if syns:
         if len(syns) > 1:
-          yield list(syns)
+          yield [word, list(syns)]
           continue
-    yield word
+    yield [word, []]
 
 def paraphrase(sentence):
   return [x for x in synonymIfExists(sentence)]
